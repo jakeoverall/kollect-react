@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Player } from '../types/types';
 import './PlayerCard.css'
 
@@ -5,18 +6,24 @@ type PlayerCardProps = { player: Player }
 
 export function PlayerCard({ player }: PlayerCardProps) {
 
-  const winPercentage = ((player.wins / player.matches) * 100).toFixed(1)
+  const [count, setCount] = useState(player.count)
 
+
+  const winPercentage = ((player.wins / player.matches) * 100).toFixed(1)
   const teamColor = { '--team-color': player.teamColor } as React.CSSProperties
 
-  function incrementCount(){
-    player.count++
+  function incrementCount() {
+    const updatedCount = count + 1
+    setCount(updatedCount)
+    // ⚠️ Mutations are bad... and you should feel bad!
+    player.count = updatedCount
+    // console.log('[PlayerData]', player)
   }
 
 
   return (
     <div className='player-card clickable' style={teamColor} onClick={incrementCount} >
-      <h4>{player.count}</h4>
+      <h4>{count}</h4>
       <img src={player.picture} alt={player.name} />
       <h2>
         {player.name}
