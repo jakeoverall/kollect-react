@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Player } from '../types/types';
 import './PlayerCard.css'
 
-type PlayerCardProps = { player: Player }
+type PlayerCardProps = { player: Player, onChange: () => void }
 
-export function PlayerCard({ player }: PlayerCardProps) {
+export function PlayerCard({ player, onChange }: PlayerCardProps) {
 
   const [count, setCount] = useState(player.count)
 
@@ -17,20 +17,21 @@ export function PlayerCard({ player }: PlayerCardProps) {
     setCount(updatedCount)
     // ⚠️ Mutations are bad... and you should feel bad!
     player.count = updatedCount
-    // console.log('[PlayerData]', player)
+    console.log('[PlayerData]', player)
+    onChange()
   }
 
 
   return (
     <div className='player-card clickable' style={teamColor} onClick={incrementCount} >
-      <h4>{count}</h4>
+      <h4 className='card-count'>{count}</h4>
       <img src={player.picture} alt={player.name} />
       <h2>
         {player.name}
       </h2>
       <p>{player.teamName}</p>
       <p className="stats">
-        🏆 {player.wins} | 🏓 {player.matches} | {winPercentage}%
+        🏆 {player.wins} | 🏓 {player.matches} <br /> {winPercentage}%
       </p>
       <p>{player.rarity} - {player.value}</p>
     </div>

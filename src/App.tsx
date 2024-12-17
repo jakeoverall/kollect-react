@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import './App.css'
 import { PlayerCard } from './components/PlayerCard'
 import { Player } from './types/types'
@@ -5,7 +6,7 @@ import { Player } from './types/types'
 
 function App() {
 
-  const cards: Player[] = [
+  const playerData: Player[] = [
     {
       name: 'Thorsten',
       teamName: 'Daring Durians',
@@ -55,13 +56,69 @@ function App() {
       id: 3
     }
   ]
+  //    a tuple - destructuring
+  const [players, setPlayers] = useState<Player[]>([...playerData])
+  const [search, setSearch] = useState('')
+
+  function updatePlayers() {
+    setPlayers([...players])
+  }
+
+  const PlayerCards = () => players
+    .filter(player =>
+      player.name.startsWith(search) ||
+      player.teamName == search ||
+      player.rarity == search
+    )
+    .map(player => (
+      <PlayerCard key={player.id} player={player} onChange={updatePlayers} />
+    ))
+
+  // Extracts the teams into a non duplicate array
+  const total = (players.reduce((acc, player) => {
+    acc += player.value * player.count
+    return acc
+  }, 0)).toFixed(2)
+
+  // Extracts the teams into a non duplicate array
+  const teams = playerData
+    .reduce((acc: string[], player: Player) => {
+      if (!acc.includes(player.teamName)) {
+        acc.push(player.teamName)
+      }
+      return acc
+    }, [])
+
+  const rarities = ['common', 'rare', 'ultra-rare']
 
 
-  const PlayerCards = () => cards.map(player => <PlayerCard key={player.id} player={player} />)
-
+  // NOTE               v destructuring the event
+  // NOTE                           v defining the type
+  function handleChange({ target }: { target: HTMLInputElement }) {
+    console.log('it is changing', target.value)
+    setSearch(target.value)
+  }
 
   return (
     <div className='App'>
+
+      <div className="total">
+        ${total}
+      </div>
+      <div className="filters">
+        <input type="text" placeholder='search' onChange={handleChange} />
+
+
+        {teams.map(team =>
+          <button onClick={() => setSearch(team)}>{team}</button>)
+        }
+
+        {
+          rarities.map(r => <button onClick={() => setSearch(r)}>{r}</button>)
+        }
+
+      </div>
+
       <PlayerCards />
 
     </div>
